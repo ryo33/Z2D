@@ -1,8 +1,8 @@
 package com.ryo33.z2d.manager;
 
-public class GameManager{
+public class MasterManager{
 
-    public GameManager(){
+    public MasterManager(){
     }
     
     public void update(){

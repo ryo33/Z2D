@@ -22,7 +22,7 @@ import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-import com.ryo33.z2d.manager.GameManager;
+import com.ryo33.z2d.manager.MasterManager;
 import com.ryo33.z2d.wrapper.Z2DMouse;
 
 public class Main {
@@ -36,7 +36,7 @@ public class Main {
 	private int initHeight = 9 * 60;
 
 	private long window;
-	private GameManager gameManager;
+	private MasterManager masterManager;
 
 	public void run() {
 		try {
@@ -67,13 +67,13 @@ public class Main {
 		glfwSetKeyCallback(window, keyCallback = GLFWKeyCallback((window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, GL_TRUE);
-			gameManager.eventKey(key, scancode, action, mods);
+			masterManager.eventKey(key, scancode, action, mods);
 		}));
 		glfwSetMouseButtonCallback(window, mouseButtonCallback = GLFWMouseButtonCallback((window, button, action, mods) -> {
-			gameManager.eventMouseButton(button, action, mods);
+			masterManager.eventMouseButton(button, action, mods);
 		}));
 		glfwSetCursorPosCallback(window, cursorPosCallback = GLFWCursorPosCallback((window, xpos, ypos) -> {
-			gameManager.eventCursorPos(xpos, ypos);
+			masterManager.eventCursorPos(xpos, ypos);
 		}));
 
 		ByteBuffer videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -84,11 +84,11 @@ public class Main {
 
 		glfwShowWindow(window);
 
-		gameManager = new GameManager();
+		masterManager = new MasterManager();
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				gameManager.update();
+				masterManager.update();
 			}
 		}, 10, 10);
 	}
@@ -100,7 +100,7 @@ public class Main {
 
 		while (glfwWindowShouldClose(window) == GL_FALSE) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			gameManager.render();
+			masterManager.render();
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
