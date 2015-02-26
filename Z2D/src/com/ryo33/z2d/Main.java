@@ -70,14 +70,36 @@ public class Main {
 		glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
 		if (glfwInit() != GL11.GL_TRUE)
 			throw new IllegalStateException("Unable to initialize GLFW");
+
+		initWindow();
+		initCallBack();
+
+		MouseHelper.setNormal(window);
+
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				masterManager.update();
+			}
+		}, 10, 10);
+	}
+	
+	private void initWindow(){
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		window = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL);
 		if (window == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
+		ByteBuffer videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwSetWindowPos(window, (GLFWvidmode.width(videoMode) - initWidth) / 2, (GLFWvidmode.height(videoMode) - initHeight) / 2);
+		glfwMakeContextCurrent(window);
+		glfwSwapInterval(1);
 
-		//set call back
+		glfwShowWindow(window);
+	}
+	
+	private void initCallBack(){
 		glfwSetKeyCallback(window, keyCallback = GLFWKeyCallback((window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, GL_TRUE);
@@ -95,23 +117,9 @@ public class Main {
 		glfwSetWindowSizeCallback(window, windowSizeCallback = GLFWWindowSizeCallback((window, width, height) -> {
 			RenderHelper.isUpdateWindowSize = true;
 			windowManager.setSize(width, height);
+			windowManager.redoLayout(null);
 			masterManager.eventWindowSize();
 		}));
-
-		ByteBuffer videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(window, (GLFWvidmode.width(videoMode) - initWidth) / 2, (GLFWvidmode.height(videoMode) - initHeight) / 2);
-		MouseHelper.setNormal(window);
-		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
-
-		glfwShowWindow(window);
-
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				masterManager.update();
-			}
-		}, 10, 10);
 	}
 
 	private void loop() {

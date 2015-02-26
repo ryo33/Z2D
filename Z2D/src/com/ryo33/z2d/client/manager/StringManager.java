@@ -54,7 +54,7 @@ public class StringManager {
 		Font font = new Font(Font.MONOSPACED, Font.PLAIN, fontSize);
 		graphics.setFont(font);
 		Rectangle2D rect = graphics.getFontMetrics().getStringBounds(str, graphics);
-		image = new BufferedImage((int)Math.ceil(rect.getWidth()), (int)Math.ceil(rect.getHeight()), BufferedImage.TYPE_4BYTE_ABGR); 
+		image = new BufferedImage((int)Math.ceil(rect.getWidth()), graphics.getFontMetrics().getAscent() + graphics.getFontMetrics().getDescent(), BufferedImage.TYPE_4BYTE_ABGR); 
 		graphics = image.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		graphics.setColor(new Color(0F, 0F, 0F, 0F));

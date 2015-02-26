@@ -6,7 +6,8 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
 import java.awt.Color;
 
 import com.ryo33.z2d.Main;
-import com.ryo33.z2d.util.Point;
+import com.ryo33.z2d.util.Box;
+import com.ryo33.z2d.util.Point3D;
 import com.ryo33.z2d.util.Texture;
 
 public class RenderHelper {
@@ -26,48 +27,49 @@ public class RenderHelper {
 		glColor3f(r, g, b);
 	}
 
-	public static void renderPlane(Point... points) {
+	public static void renderPlane(Point3D... points) {
 		for (int i = 0, len = points.length; i < len; i++) {
 			glVertex3f(points[i].x, points[i].y, points[i].z);
 		}
 	}
 
-	public static void renderTexturedPlane(Point... points) {
+	public static void renderTexturedPlane(Point3D... points) {
 		for (int i = 0, len = points.length / 2; i < len; i++) {
 			glTexCoord2f(points[i + len].x, points[i + len].y);
 			glVertex3f(points[i].x, points[i].y, points[i].z);
 		}
 	}
 
-	public static void renderBox(Point a, Point b, Point c, Point d) {
+	public static void renderBox(Point3D a, Point3D b, Point3D c, Point3D d) {
 		glBegin(GL_QUADS);
 		renderPlane(a, b, c, d);
 		glEnd();
 	}
 
-	public static void renderBox(Point a) {
+	public static void renderBox(Point3D a) {
 		renderBox(a, 1, 1);
 	}
 
-	public static void renderBox(Box box, float z) {
-		renderBox(new Point(box.x, box.y, z), box.width, box.height);
+	public static void renderBox(Box box, Object... args) {
+		actionArgs(args);
+		renderBox(new Point3D(box.x, box.y), box.width, box.height);
 	}
 
-	public static void renderBox(Point a, float width, float height) {
+	public static void renderBox(Point3D a, float width, float height) {
 		glBegin(GL_QUADS);
-		renderPlane(a, new Point(a.x + width, a.y, a.z), new Point(a.x + width, a.y + height, a.z), new Point(a.x, a.y + height, a.z));
+		renderPlane(a, new Point3D(a.x + width, a.y, a.z), new Point3D(a.x + width, a.y + height, a.z), new Point3D(a.x, a.y + height, a.z));
 		glEnd();
 	}
 
-	public static void renderCube(Point a) {
+	public static void renderCube(Point3D a) {
 		renderCube(a, 1, 1, 1);
 	}
 
-	public static void renderCube(Point a, float width, float height, float depth) {
-		renderCube(new Point(a.x, a.y, a.z + depth), new Point(a.x + width, a.y, a.z + depth), new Point(a.x + width, a.y + height, a.z + depth), new Point(a.x, a.y + height, a.z + depth), new Point(a.x, a.y, a.z), new Point(a.x + width, a.y, a.z), new Point(a.x + width, a.y + height, a.z), new Point(a.x, a.y + height, a.z));
+	public static void renderCube(Point3D a, float width, float height, float depth) {
+		renderCube(new Point3D(a.x, a.y, a.z + depth), new Point3D(a.x + width, a.y, a.z + depth), new Point3D(a.x + width, a.y + height, a.z + depth), new Point3D(a.x, a.y + height, a.z + depth), new Point3D(a.x, a.y, a.z), new Point3D(a.x + width, a.y, a.z), new Point3D(a.x + width, a.y + height, a.z), new Point3D(a.x, a.y + height, a.z));
 	}
 
-	public static void renderCube(Point a, Point b, Point c, Point d, Point e, Point f, Point g, Point h) {
+	public static void renderCube(Point3D a, Point3D b, Point3D c, Point3D d, Point3D e, Point3D f, Point3D g, Point3D h) {
 		glBegin(GL_QUADS);
 		glColor3f(1, 0, 0);
 		renderPlane(a, b, c, d);
@@ -90,48 +92,56 @@ public class RenderHelper {
 	}
 
 	public static void renderString(String str, Box box, Object... args) {
-		for (Object arg : args) {
-			if (arg instanceof Color) {
-				setColor(((Color) arg).getRed(), ((Color) arg).getGreen(), ((Color) arg).getBlue());
-			}
-		}
+		actionArgs(args);
 		glEnable(GL_TEXTURE_2D);
 		Texture tex = Main.stringManager.get(str);
 		float paddingX = box.width / 2 - tex.width / 2;
+		float paddingY = box.height / 2 - tex.height / 2;
 		glPushAttrib(GL_TEXTURE_BINDING_2D);
 		tex.bind();
 		glBegin(GL_QUADS);
-		renderTexturedPlane(new Point(box.x + paddingX, box.y), new Point(box.x + box.width - paddingX, box.y), new Point(box.x + box.width - paddingX, box.y + box.height), new Point(box.x + paddingX, box.y + box.height), Point.p01, Point.p11, Point.p10, Point.p00);
+		renderTexturedPlane(new Point3D(box.x + paddingX, box.y + paddingY), new Point3D(box.x + box.width - paddingX, box.y + paddingY), new Point3D(box.x + box.width - paddingX, box.y + tex.height + paddingY), new Point3D(box.x + paddingX, box.y + tex.height + paddingY), Point3D.p01, Point3D.p11, Point3D.p10, Point3D.p00);
 		glEnd();
 		glPopAttrib();
 		glDisable(GL_TEXTURE_2D);
 	}
-
-	public static void renderString(char[] str, Box box, Object... args) {
+	
+	private static void actionArgs(Object[] args){
 		for (Object arg : args) {
 			if (arg instanceof Color) {
 				setColor(((Color) arg).getRed(), ((Color) arg).getGreen(), ((Color) arg).getBlue());
 			}
 		}
+	}
+
+	public static void renderString(char[] str, Box box, Object... args) {
+		actionArgs(args);
 		Texture[] texes = new Texture[str.length];
 		int sumWidth = 0;
+		int sumHeight = 0;
 		for (int i = 0, len = str.length; i < len; i++) {
 			texes[i] = Main.stringManager.get(str[i]);
 			sumWidth += texes[i].width;
+			sumHeight += texes[i].height;
 		}
 		glEnable(GL_TEXTURE_2D);
 		float paddingX = box.width / 2 - sumWidth / 2;
+		float paddingY = box.height / 2 - sumHeight / str.length / 2;
 		glPushAttrib(GL_TEXTURE_BINDING_2D);
 		int offsetX = 0;
 		for (Texture tex : texes) {
 			tex.bind();
 			glBegin(GL_QUADS);
-			renderTexturedPlane(new Point(box.x + paddingX + offsetX, box.y), new Point(box.x + paddingX + offsetX + tex.width, box.y), new Point(box.x + paddingX + offsetX + tex.width, box.y + tex.height), new Point(box.x + paddingX + offsetX, box.y + tex.height), Point.p01, Point.p11, Point.p10, Point.p00);
+			renderTexturedPlane(new Point3D(box.x + paddingX + offsetX, box.y + paddingY), new Point3D(box.x + paddingX + offsetX + tex.width, box.y + paddingY), new Point3D(box.x + paddingX + offsetX + tex.width, box.y + tex.height), new Point3D(box.x + paddingX + offsetX, box.y + tex.height), Point3D.p01, Point3D.p11, Point3D.p10, Point3D.p00);
 			glEnd();
 			offsetX += tex.width;
 		}
 		glPopAttrib();
 		glDisable(GL_TEXTURE_2D);
+	}
+	
+	public static Point3D getScale(Box target, Box frame){
+		return null;
 	}
 
 	public static void set3D() {

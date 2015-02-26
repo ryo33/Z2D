@@ -1,0 +1,29 @@
+package com.ryo33.z2d.game.registry;
+
+import java.util.HashMap;
+
+import com.ryo33.z2d.game.entity.Entity;
+
+public class EntityRegistry {
+	
+	private HashMap<Class<Entity>, Info> entitys;
+	
+	public EntityRegistry(){
+		entitys = new HashMap<Class<Entity>, EntityRegistry.Info>();
+	}
+	
+	public void register(Class<Entity> entityClass, int updateFrequency){
+		entitys.put(entityClass, new Info(updateFrequency));
+	}
+	
+	public class Info{
+		
+		public int updateFrequency;
+		
+		public Info(int updateFrequency){
+			this.updateFrequency = updateFrequency;
+		}
+		
+	}
+	
+}
