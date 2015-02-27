@@ -1,12 +1,13 @@
 package com.ryo33.z2d.game.registry;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.ryo33.z2d.game.entity.Entity;
 
 public class EntityRegistry {
 	
-	private HashMap<Class<Entity>, Info> entitys;
+	private Map<Class<Entity>, Info> entitys;
 	
 	public EntityRegistry(){
 		entitys = new HashMap<Class<Entity>, EntityRegistry.Info>();
