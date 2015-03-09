@@ -1,8 +1,10 @@
 package com.ryo33.z2d.game.world;
 
+import java.io.Serializable;
+
 import com.ryo33.z2d.util.Map2D;
 
-public class BlockManager {
+public class BlockManager implements Serializable {
 
 	private Map2D<Integer, Integer, Block> blocks;
 	private WorldGenerator worldGenerator;

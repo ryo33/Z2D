@@ -1,5 +1,6 @@
 package com.ryo33.z2d.game.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class EntityManager {
+public class EntityManager implements Serializable {
 
 	private Map<Integer, Entity> entities;
 	private List<Integer> freeIDs;

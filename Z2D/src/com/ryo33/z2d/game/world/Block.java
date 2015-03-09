@@ -1,6 +1,8 @@
 package com.ryo33.z2d.game.world;
 
-public class Block {
+import java.io.Serializable;
+
+public class Block implements Serializable {
 
 	public static final int blockSize = 56;
 	private byte[] chips;

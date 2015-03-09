@@ -3,10 +3,19 @@ package com.ryo33.z2d.client.manager;
 import com.ryo33.z2d.client.Updatable;
 
 public class UGameManager implements Updatable {
+	
+	public UMasterManager parent;
+
+	public UGameManager(UMasterManager parent){
+		this.parent = parent;
+	}
+	
+	public void init(){
+		
+	}
 
 	@Override
-	public int update() {
-		return Nothing;
+	public void update() {
 	}
 
 	@Override

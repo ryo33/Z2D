@@ -13,22 +13,19 @@ public class UMasterManager implements Updatable {
 	float y;
 	Camera camera;
 
-	private static final int starting = 0, title = 1, game = 2;
-	private State state;
+	public static final int starting = 0, title = 1, game = 2;
+	public State state;
 	private Updatable[] managers;
 
 	public UMasterManager() {
 		state = new State("starting", "title", "game");
-		managers = new Updatable[] { new UStartingManager(), new UTitleManager(), new UGameManager() };
+		managers = new Updatable[] { new UStartingManager(this), new UTitleManager(this), new UGameManager(this) };
 		camera = new Camera(0, 0, 1);
 	}
 
 	@Override
-	public int update() {
-		if(managers[state.getState()].update() == Next){
-			state.setState(title);
-		}
-		return Nothing;
+	public void update() {
+		managers[state.getState()].update();
 	}
 
 	@Override

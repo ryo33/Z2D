@@ -23,11 +23,14 @@ public class UTitleManager implements Updatable {
 
 	public static final int title = 0, joinGame = 1, createGame = 2;
 
-	public State state;
+	public State state = new State("title", "joinGame", "createGame");
+	public UMasterManager parent;
 
-	public UTitleManager() {
+	public UTitleManager(UMasterManager parent) {
+		this.parent = parent;
 		componentGroups = new Component[][] {
 		{
+				// title
 		new Button("Join Game", button1.clone(new LayoutBox())) {
 			@Override
 			public void onClick() {
@@ -40,10 +43,13 @@ public class UTitleManager implements Updatable {
 			}
 		}
 		}, {
+				// joinGame
 		new Button("Join", button2.clone(new LayoutBox())) {
 			@Override
 			public void onClick() {
-				state.setState(createGame);
+				// TODO
+				parent.state.setState(UMasterManager.game);
+				state.setState(title);
 			}
 		}, new Button("Back", button1.clone(new LayoutBox())) {
 			@Override
@@ -52,11 +58,12 @@ public class UTitleManager implements Updatable {
 			}
 		}
 		}, {
+				// createGame
 		new Button("Start", button2.clone(new LayoutBox())) {
 			@Override
 			public void onClick() {
 				if (server == null || server.isRun() == false) {
-					server = new Server(new GameData("test"));
+					server = new Server("test", 30003);
 					state.setState(title);
 				}
 			}
@@ -73,14 +80,12 @@ public class UTitleManager implements Updatable {
 				Main.windowManager.add(component);
 			}
 		}
-		state = new State("first", "joinGame", "createGame");
 		state.setState(title);
 	}
 
 	@Override
-	public int update() {
+	public void update() {
 		componentGroups[2][0].setEnabled(server == null || !server.isRun());
-		return Nothing;
 	}
 
 	@Override

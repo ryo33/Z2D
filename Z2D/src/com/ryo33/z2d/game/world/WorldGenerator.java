@@ -1,6 +1,8 @@
 package com.ryo33.z2d.game.world;
 
-public class WorldGenerator {
+import java.io.Serializable;
+
+public class WorldGenerator implements Serializable {
 	
 	public WorldGenerator(){
 		

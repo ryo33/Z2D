@@ -3,11 +3,13 @@ package com.ryo33.z2d.game;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import com.ryo33.z2d.game.world.World;
+import com.ryo33.z2d.server.Server;
 
 public class GameData implements Serializable {
 
@@ -15,13 +17,11 @@ public class GameData implements Serializable {
 	private static final long serialVersionUID = -2549480358972335603L;
 
 	private World world;
-	private String name;
 	private File file;
 
-	public GameData(String name) {
+	public GameData(File file) {
 		world = new World();
-		this.name = name;
-		this.file = new File(name + extention);
+		this.file = file;
 	}
 
 	public void saveData() {
@@ -35,15 +35,11 @@ public class GameData implements Serializable {
 	public static GameData getGameData(String name) {
 		GameData data;
 		try {
-			data = (GameData) new ObjectInputStream(new FileInputStream(name + extention)).readObject();
+			data = (GameData) new ObjectInputStream(new FileInputStream(Server.getDirectory(name) + name + extention)).readObject();
 		} catch (Exception e) {
-			data = new GameData("name");
+			data = new GameData(new File(Server.getDirectory(name) + name + extention));
 		}
 		return data;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 }

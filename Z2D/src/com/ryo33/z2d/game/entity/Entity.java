@@ -1,9 +1,11 @@
 package com.ryo33.z2d.game.entity;
 
+import java.io.Serializable;
+
 import com.ryo33.z2d.util.Point;
 import com.ryo33.z2d.util.Quad;
 
-public class Entity {
+public class Entity implements Serializable {
 
 	public int x, y;
 	

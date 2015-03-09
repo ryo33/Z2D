@@ -1,6 +1,8 @@
 package com.ryo33.z2d.game.world;
 
-public class Blocks {
+import java.io.Serializable;
+
+public class Blocks implements Serializable {
 
 	Block[] blocks;
 

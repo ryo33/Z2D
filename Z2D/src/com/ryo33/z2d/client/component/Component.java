@@ -5,7 +5,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import com.ryo33.z2d.client.Updatable;
 import com.ryo33.z2d.client.helper.LayoutBox;
-import com.ryo33.z2d.util.Box;
 
 public abstract class Component extends LayoutBox implements Updatable {
 
@@ -22,8 +21,7 @@ public abstract class Component extends LayoutBox implements Updatable {
 	}
 
 	@Override
-	public int update() {
-		return Nothing;
+	public void update() {
 	}
 
 	@Override

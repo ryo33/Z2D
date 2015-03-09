@@ -3,10 +3,16 @@ package com.ryo33.z2d.client.manager;
 import com.ryo33.z2d.client.Updatable;
 
 public class UStartingManager implements Updatable {
+	
+	public UMasterManager parent;
+	
+	public UStartingManager(UMasterManager parent) {
+		this.parent = parent;
+	}
 
 	@Override
-	public int update() {
-		return Next;
+	public void update() {
+		parent.state.setState(UMasterManager.title);
 	}
 
 	@Override

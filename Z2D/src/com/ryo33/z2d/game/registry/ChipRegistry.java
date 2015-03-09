@@ -1,11 +1,12 @@
 package com.ryo33.z2d.game.registry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ryo33.z2d.game.world.Chip;
 
-public class ChipRegistry {
+public class ChipRegistry implements Serializable {
 	
 	public List<Regist> regists;
 	

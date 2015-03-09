@@ -1,11 +1,12 @@
 package com.ryo33.z2d.game.registry;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ryo33.z2d.game.entity.Entity;
 
-public class EntityRegistry {
+public class EntityRegistry implements Serializable {
 	
 	private Map<Class<Entity>, Info> entitys;
 	

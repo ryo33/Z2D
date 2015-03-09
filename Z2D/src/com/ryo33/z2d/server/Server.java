@@ -6,6 +6,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.PrintStream;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -17,11 +21,18 @@ import javax.swing.JTextArea;
 
 import com.ryo33.z2d.Main;
 import com.ryo33.z2d.game.GameData;
+import com.ryo33.z2d.network.Packet;
+import com.ryo33.z2d.network.TaskSet;
+import com.ryo33.z2d.util.ConfigManager;
 
 public class Server {
 
 	private static final int width = 16 * 40, height = 9 * 40;
 	private static final String properties = "Properties", exit = "Exit", command = "Command", status = "Server Status";
+	private static final String directory = "server/";
+
+	private PrintStream out, err;
+	private ConfigManager configManager;
 
 	private JFrame frame;
 	private JPanel panel;
@@ -32,26 +43,43 @@ public class Server {
 	private JMenuItem[] menuItems;
 
 	private GameData data;
+	private SocketManager socketManager;
 	private boolean isRun;
+	private Queue<TaskSet> taskSets;
+	private Queue<Packet> packets;
 
-	public Server(GameData data) {
-		initServer(data);
+	public Server(String name, int port) {
+		initServer(name, port);
 	}
 
-	public void initServer(GameData data) {
-		this.data = data;
-		initWindow();
+	public void initServer(String name, int port) {
+		initWindow(name);
 		isRun = true;
+		this.out = System.out;
+		this.err = System.err;
+		// System.setOut();
+		// System.setErr();
+		File serverFolder = new File(directory + name);
+		if (!serverFolder.exists())
+			serverFolder.mkdirs();
+		this.data = GameData.getGameData(name);
+		configManager = new ConfigManager(new File(directory + name + "/server" + ConfigManager.extention));
+		taskSets = new ConcurrentLinkedQueue<TaskSet>();
+		packets = new ConcurrentLinkedQueue<Packet>();
+		socketManager = new SocketManager(taskSets, packets, configManager, port);
 	}
 
 	public void exitServer() {
 		frame.dispose();
 		data.saveData();
 		isRun = false;
+		System.setOut(this.out);
+		System.setErr(this.err);
+		configManager.write();
 	}
 
-	private void initWindow() {
-		frame = new JFrame(data.getName() + " - " + Main.title + " Server");
+	private void initWindow(String name) {
+		frame = new JFrame(name + " - " + Main.title + " Server");
 		panel = new JPanel();
 		textArea = new JTextArea();
 		scrollPane = new JScrollPane(textArea);
@@ -101,7 +129,7 @@ public class Server {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				super.windowClosed(e);
-				data.saveData();
+				exitServer();
 			}
 		});
 
@@ -113,6 +141,10 @@ public class Server {
 
 	public boolean isRun() {
 		return isRun;
+	}
+
+	public static String getDirectory(String name) {
+		return directory + name + "/";
 	}
 
 }
