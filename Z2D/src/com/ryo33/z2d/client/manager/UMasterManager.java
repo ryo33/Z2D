@@ -3,6 +3,8 @@ package com.ryo33.z2d.client.manager;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
+import java.net.InetAddress;
+
 import com.ryo33.z2d.client.Updatable;
 import com.ryo33.z2d.util.Camera;
 import com.ryo33.z2d.util.State;
@@ -60,7 +62,8 @@ public class UMasterManager implements Updatable {
 		managers[state.getState()].eventWindowSize();
 	}
 
-	public void gameInit() {
+	public void gameInit(InetAddress address, int port) {
+		((UGameManager)managers[game]).init(address, port);
 	}
 
 }

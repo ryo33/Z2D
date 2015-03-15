@@ -2,11 +2,16 @@ package com.ryo33.z2d.server;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,7 +36,6 @@ public class Server {
 	private static final String properties = "Properties", exit = "Exit", command = "Command", status = "Server Status";
 	private static final String directory = "server/";
 
-	private PrintStream out, err;
 	private ConfigManager configManager;
 
 	private JFrame frame;
@@ -47,18 +51,22 @@ public class Server {
 	private boolean isRun;
 	private Queue<TaskSet> taskSets;
 	private Queue<Packet> packets;
+	
+	public static PrintStream out;
 
 	public Server(String name, int port) {
 		initServer(name, port);
 	}
 
-	public void initServer(String name, int port) {
+	private void initServer(String name, int port) {
 		initWindow(name);
 		isRun = true;
-		this.out = System.out;
-		this.err = System.err;
-		// System.setOut();
-		// System.setErr();
+		out = new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				textArea.append(String.valueOf((char)b));
+			}
+		});
 		File serverFolder = new File(directory + name);
 		if (!serverFolder.exists())
 			serverFolder.mkdirs();
@@ -73,8 +81,6 @@ public class Server {
 		frame.dispose();
 		data.saveData();
 		isRun = false;
-		System.setOut(this.out);
-		System.setErr(this.err);
 		configManager.write();
 	}
 

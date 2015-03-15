@@ -1,17 +1,21 @@
 package com.ryo33.z2d.client.manager;
 
+import java.net.InetAddress;
+
+import com.ryo33.z2d.client.Client;
 import com.ryo33.z2d.client.Updatable;
 
 public class UGameManager implements Updatable {
 	
 	public UMasterManager parent;
+	public Client client;
 
 	public UGameManager(UMasterManager parent){
 		this.parent = parent;
 	}
 	
-	public void init(){
-		
+	public void init(InetAddress address, int port){
+		client = new Client(address, port);
 	}
 
 	@Override

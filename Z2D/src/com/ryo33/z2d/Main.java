@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWWindowCloseCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GL11;
@@ -32,6 +33,7 @@ public class Main {
 	private GLFWMouseButtonCallback mouseButtonCallback;
 	private GLFWCursorPosCallback cursorPosCallback;
 	private GLFWWindowSizeCallback windowSizeCallback;
+	private GLFWWindowCloseCallback windowCloseCallback;
 
 	public static int initWidth = 16 * 60;
 	public static int initHeight = 9 * 60;
@@ -53,18 +55,20 @@ public class Main {
 			mouseButtonCallback.release();
 			cursorPosCallback.release();
 			windowSizeCallback.release();
-		} catch (Exception e){
+			windowCloseCallback.release();
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			glfwTerminate();
 			errorCallback.release();
+			System.exit(0);
 		}
 	}
 
 	private void init() {
 		windowManager = new WindowManager(window, initWidth, initHeight);
 		stringManager = new StringManager();
-		
+
 		masterManager = new UMasterManager();
 
 		glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -83,8 +87,8 @@ public class Main {
 			}
 		}, 10, 10);
 	}
-	
-	private void initWindow(){
+
+	private void initWindow() {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -98,12 +102,12 @@ public class Main {
 
 		glfwShowWindow(window);
 	}
-	
-	private void initCallBack(){
+
+	private void initCallBack() {
 		glfwSetKeyCallback(window, keyCallback = GLFWKeyCallback((window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, GL_TRUE);
-			if (key == GLFW_KEY_F2 && action == GLFW_RELEASE){
+			if (key == GLFW_KEY_F2 && action == GLFW_RELEASE) {
 				windowManager.toggleFullScreen();
 			}
 			masterManager.eventKey(key, scancode, action, mods);
@@ -120,14 +124,17 @@ public class Main {
 			windowManager.redoLayout(null);
 			masterManager.eventWindowSize();
 		}));
+		glfwSetWindowCloseCallback(window, windowCloseCallback = GLFWWindowCloseCallback((sam) -> {
+			System.exit(0);
+		}));
 	}
 
 	private void loop() {
 		GLContext.createFromCurrent();
-		//Enable transparency
+		// Enable transparency
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//Enable front side only 
+		// Enable front side only
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
@@ -141,7 +148,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		//debug mode on
+		// debug mode on
 		Debug.isDebug = true;
 		new Main().run();
 	}

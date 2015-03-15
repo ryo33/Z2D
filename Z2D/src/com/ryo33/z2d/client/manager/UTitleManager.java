@@ -1,6 +1,7 @@
 package com.ryo33.z2d.client.manager;
 
-import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import com.ryo33.z2d.Main;
 import com.ryo33.z2d.client.Updatable;
@@ -8,7 +9,6 @@ import com.ryo33.z2d.client.component.Button;
 import com.ryo33.z2d.client.component.Component;
 import com.ryo33.z2d.client.helper.LayoutBox;
 import com.ryo33.z2d.client.helper.RenderHelper;
-import com.ryo33.z2d.game.GameData;
 import com.ryo33.z2d.server.Server;
 import com.ryo33.z2d.util.State;
 
@@ -48,8 +48,13 @@ public class UTitleManager implements Updatable {
 			@Override
 			public void onClick() {
 				// TODO
-				parent.state.setState(UMasterManager.game);
-				state.setState(title);
+				try {
+					((UMasterManager)parent).gameInit(InetAddress.getLocalHost(), 50033);
+					parent.state.setState(UMasterManager.game);
+					state.setState(title);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
 			}
 		}, new Button("Back", button1.clone(new LayoutBox())) {
 			@Override
@@ -63,7 +68,7 @@ public class UTitleManager implements Updatable {
 			@Override
 			public void onClick() {
 				if (server == null || server.isRun() == false) {
-					server = new Server("test", 30003);
+					server = new Server("test", 50033);
 					state.setState(title);
 				}
 			}
